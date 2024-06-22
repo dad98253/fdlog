@@ -1858,6 +1858,19 @@ import os,sys,time,calendar,string,re,time,_thread,threading,socket,hashlib
 import random,math,sqlite3,urllib.request,struct,random,json
 import tkinter as tk
 
+# // -------------------------------------------
+# // added by jck 6/24:
+import subprocess
+#opener = "open" if sys.platform == "darwin" else "xdg-open"
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
+
+# // -------------------------------------------
+
 # globals subject to local override (also those on first page above)
 
 tcp_port  = 5100            # yahoo webcam port allowed thru firewall
@@ -5833,7 +5846,8 @@ if os.path.isdir(start):
                     command=lambda z1=p,z2=b:viewtextf(z1,z2))
             elif x in (".pdf",".jpg",".gif",".png"):    # other file types can be launched
                 menus[r].add_command(label=b,\
-                    command=lambda z=p:os.startfile(z))
+#jck                    command=lambda z=p:os.startfile(z))
+                    command=lambda z=p:open_file(z))
 
 # build help menu
 
