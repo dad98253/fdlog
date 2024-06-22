@@ -1,0 +1,713 @@
+Field Day Log Program Manual                  Copyright 1984-2023 by Alan W6AKB
+www.FDLog.us                www.AntennaLaunchers.com              www.HSFDG.org
+
+FDLog is distributed under the GNU V2 1991 Public License
+
+fdlogman.txt: Revision: 1.29 4/3/2023
+
+Note that the help/Getting Started file is updated more rapidly and will
+address the most recent improvements before these Manual pages will.
+
+
+New for 2023
+
+This program is undergoing conversion to Python 3 as well as cleanup
+and improvement. The manual tends to lag behind. Most of the changes
+are invisible but not all. The change list can be viewed in the program
+via the Help/FDLog Release Log menu item. This release is not expected
+to be the final one before Field Day 2023 in June, but it seems to be
+stable and is a good test version to get feedback on.
+
+A few Highlights
+
+FDLog3.py is the new Python 3 version of FDLog. It can be network compatible 
+with the Python 2 version so a mixed mode site can be used by engaging 
+compatibility mode. This has been developed and tested primarily on Windows 
+10 and 11 with Python 3.10 and 3.11 but should run on other systems and most recent versions 
+of Python 3. Support for the serial FDLog GPS clock is present in this version 
+but has not been tested. We may go away from this serial GPS clock as we are 
+moving to synchronizing system time outside of FDLog. Pyserial is needed 
+only for this GPS clock, though we may want to use it for radio interfacing 
+at some point in the future.
+
+A few changes were made with the Authorization Key. It is 3 to 12 chars
+of uppercase, lowercase or numbers plus hyphen (as it always has been). 
+It is used to set the filename of the database and text log file as well 
+as all 12 characters are used in the digital signature authentication hash. 
+In the past the first 3 characters of the Authkey were used to make the filenames 
+(fdlogxxx.fdd and fdlogxxx.sq3), however this has been increased to the first 
+5 characters. The new Python 3 version of FDLog has some new networking features
+such as block fills that speed up newly started nodes in catching up, time 
+jerks that speed clock stabilization and dropping the rarely used port offsetting 
+features that make it incompatible with the old Python 2 networking. However we
+have retained a compatibility feature so you can continue to use Python 2 
+FDLog with Python 3 FDLog. To do this choose an Authkey that ends
+in a hyphen such as 'tst-', the suggested value for testing and training,
+and FDLog 155m and beyond will operate in a compatibility mode with the
+old FDLog networking. The trailing hyphen will not be used in the filenames, 
+but it will be included in the hash functions for digital signatures
+(authentication). If you get AUTH FAILED errors, check that the auth keys
+for all nodes are all exactly the same (case matters).
+
+A beep function is implemented, it plays the "beep.wav" file when there
+is a QST broadcast message, or when the local node band timer expires.
+QST messages have been increased from 40 to 80 characters capacity.
+
+There is a timer for each node that will clear the band reservation if 
+no keyboard activity is detected for 15 minutes. There is a setting to 
+change the default timeout in the first page of the program code and
+in the local.py.txt file, review that file in the directory for futher
+information on how to use it and what it can preset for you.
+
+We are using NTP time synchronization of machines which is important
+for digital modes like FT8. This reduces the need for FDLog to have it's
+own GPS time sync. It is still useful to be able to designate a time master
+in FDLog for those nodes that don't have NTP. Any node running digital 
+modes will certainly want an NTP client to set their clock accurately to
+improve their digital mode results. We recommend the Meinberg NTP client
+for Windows systems. For NTP servers you can use the internet if it is 
+available, if not you can set up your own NTP servers as we have. We operate 
+Field Day in the forest and the cellular internet is not solid there, so 
+we use a couple of small Raspberry Pi NTP servers with GPS receivers. 
+A detailed article on how we have done this is available at our www.HSFDG.org 
+website. Even an old small Raspberry Pi can do this easily, we use Pi Zero W's
+and old 3B+'s for this. More than one is recommended to provide backup and 
+redundancy which NTP is set up to use. It can also be used for a web server
+to share files to the site for convenience.
+
+There is still a need for FDLog to synchronize time for the logfiles, and
+we have improved this in many ways, including a much faster catchup mode
+when a node's clock is far off. The support for our own serial GPS clock
+is now re-enabled but it has not been tested recently.
+
+When the File/Save Entry File menu is selected it now, in addition to making
+the FD report as it did in the past, it also has in that report a Cabrillo
+file. There is no definition for Field Day in Cabrillo, but many programs
+have adopted an obvious one. At the same time FDLog also writes a JSON file
+which contains the log information in a compact format that is easily
+input to any programming language for those times a custom reformatting is
+required.
+
+New for 2021
+
+There are no changes in FDLog for 2021. However you might need to create a
+shortcut to run it.
+
+When Python 3 is installed it likely intercepts older Python 2 programs like
+FDLog and causes them to fail. One solution is to create a shortcut to run the
+old program with the old Python. Here is a procedure for creating such a
+shortcut:
+
+Create a shortcut on the desktop by right clicking and selecting new / shortcut
+Browse to the fdlog directory and select the fdlog.py file
+Select next
+Name the shortcut fdlog2
+Click finish
+This will create the shortcut, but it is not yet correct
+
+Right click on this shortcut and select properties
+So you can fix it and make it work
+The target line needs the path to python 2.7 added in front of what is there.
+Leave what is there and put this in front of that:
+
+C:\Python27\python.exe <space> "......."
+
+After that what is already there should be ok, something like:
+"C:\Users\<user>\Dropbox\fdlog\fdlog.py"
+
+Or whatever path there is to fdlog.py on your system
+
+In the start in line what is already there should be ok
+If not, put the path to the home directory where the fdlog files are and 
+where the databases will be, in quotes: "..."
+
+If this doesn't work use a command window to see error messages:
+Hold windows key and hit r
+Type cmd <return>
+Type cd desktop <return> (assuming the fdlog2 shortcut is on your desktop)
+Run it by typing fdlog2.lnk
+Then you should see the error messages...
+This also works for seeing fdlog crashing error messages
+
+
+New for 2016
+
+Just a quick preface, lots of changes but many are not visible to users.
+However there is a very important one that is here now.
+
+Out of Order Input
+
+The first FOUR Input Elements can be in ANY ORDER
+  Call Prefix
+  Call Suffix
+  Field Day Class
+  Section (MUST be prefaced with ';' if before callsign)
+
+The comment can only be entered after all other fields:
+  Comment (always last)
+
+Complex Callsign Entries
+
+    FDLog can now accept complex callsigns - those with one or two '/'
+    characters, such as "VE2/WA6ZTY, "N6OI/7, "VE7REZ/W6 "WB6MLC/HFP or 
+    "VE6/WB6ZQZ/MM. This also includes calls with multiple digits, or 
+    calls that start with digits. These calls may not be correctly DUP 
+    check, but they will go in the log. To enter these special callsigns 
+    start with a double quote, like "KH6/W6AKB/QRP. No closing quote is 
+    used. The other fields are entered  normally, the " indicates to 
+    FDLog that a complex callsign will follow. There is a callsign length 
+    limit and that may be reached by the longer examples.
+
+
+New for 2014
+
+Adding W6AKB's GPS Clock - this USB satellite locked clock gives time to the
+millisecond and allows better time sync. Also added milliseconds to the FDLog
+network time sync. The first 20 COM ports will be searched for the GPS Clock.
+PySerial is required. If PySerial is not present it skips the search.
+If the GPS Clock is present it will report two values every 30 seconds in
+the FDLog diagnostic window. The first is FDLog time error, and runs about
+one millisecond (0.001) after synchronizing. The second is total offset from
+the system clock.
+
+The time master node is not new, but it has been separated from having a
+zero time offset, so a node running a GPS Clock, with a nonzero time offset
+can be the master time node. It is the only node allowed to advertise level
+zero time quality, and it is the only node sending out time updates at 1hz
+instead of the usual 0.1hz rate.
+
+.timeok 0                    system time cannot be trusted (normal)
+.timeok 1                    system time can be trusted (NTP/GPS)
+.timeok                      reports current value
+
+.set tmast <nodeid>          sets node to be time master
+
+
+New for 2013
+
+Added sqlite database. The text journal is also there but is write only, not
+read back since the database contains the journal information needed to
+restart the program and reload the database.
+
+Added remote TCP server for training and testing.
+
+
+New for 2011
+
+.set contst FD or VHF changes dup check to include <call>/<grid> for VHF
+contest
+
+
+New for 2006
+
+QSO Editing! Right-clicking on a Q in the log brings up an edit
+dialog box. From there it can be Deleted, or modified and then
+Saved. Errors light up the fields in yellow when Save is attempted.
+The Dialog disappears on Successful Save, Delete, or Quit.
+
+Log text from the local node is blue in color, from other nodes is black.
+Automatic case adjustment for various inputs simplifies usage. Automatic
+log lookups show log entries for duplicate stations and stations being
+logged show info from other bands. Log lookups (<callsign><return>)
+conveniently allow looking stations up in the log.
+
+Directly Executable Version distributed. fdlogexe.zip. Runs without Python
+installed. Windows required. 3.5 Megabyte download.
+
+
+New for 2005
+
+Time Synchronization. Designate one machine as the master, all others will
+chase it. Use '.set tmast <node>' to select master time node.
+
+Changed fd rules filename to 'fdrules.pdf'. Just download pdf rules and
+rename the file to this name. Then the rules can be accessed from the menu.
+
+Found and fixed another bug in the power type-in. Using the pulldown worked,
+but typing in caused problems. Root cause here is changes to how Python
+handles variable types.
+
+Made an attempt to fix up the GOTA scoring changes in the ARRL rules. Not
+tested.
+
+Added the second site visitor as well as the youth bonus.
+
+
+New for 2004
+
+Just before Field Day many minor changes were made to the startup. The
+messages were improved and things were simplified in general. Also added
+is a directly executable version that does not require Python to be installed.
+This version carries an interpreter along with it, so it is larger.
+The startup auth key is xxxyyyzzz... xxx goes onto filename. Use 04a for
+2004 version a. yyy for port, zzz... for hash key.
+
+Just after Field Day the Time Sync feature was added (enough problems with
+NTP servers and clients...). Now a node may be designated as the 'time master'
+and all client FDLog programs will track it. This DOES NOT change the system
+time, just the internal time FDLog uses in the log...
+
+
+Brief History
+
+This new version of the FD Log program was written in March-April of 2002 loosely
+base on the original C but rewritten to Python 2.2. It was written initially for 
+command line mode, and then altered for Windows Event type programming. It retains 
+many of the line oriented commands, indeed the basic entry of QSO information is
+most efficient in this manner. Some of the command line commands are or will be 
+deprecated as they are not consistent with the new mode.
+
+
+Program Requirements
+
+Efficient keystroke input for QSO entry was the fundamental requirement of the 
+original program written in 1984. This remains a priority requirement today. 
+This means that no mouse activity is required for data entry during QSO logging.
+It is not necessary to use the mouse to change bands or power 
+settings. These frequent items are available both in command
+and mouse/dialog box form.
+
+The new requirement, and indeed one of the strong motivations for a complete
+rewrite, is multi-station synchronization. The activity of Field Day operations
+is strongly dependent on sharing of information between stations - keeping the
+logs for each band and mode, and keeping track of which stations are on what
+bands, and how many are active. Running around the site looking for a band-mode
+floppy or transmitter token is not conducive to efficient operation. So this
+version is required to facilitate those activites.
+
+Robustness, as always, is a major requirement. This software operates in an
+environment of unreliable computers, power systems, and RF. Single points of
+failure must either be avoided or a failure mitigation strategy must be in place
+that minimizes the impacts of failures on the operation.
+
+
+Program Design
+
+The first attempt at a redesign of this software occurred in about 2000 and
+was based on PHP and MySQL. There were two problems with that approach. One
+was the huge single point of failure in that model, and the other was the 
+efficiency of the system with regard to operator keystrokes and response time.
+
+This second attempt was facilitated by the availability of two things. One
+is the peer to peer wireless networking, 802.11b. The other is a relatively
+new programming language that supports multiplatform rapid prototyping and 
+has the requisite socket libraries. I have experimented with many languages,
+but none have had the clean syntax and wide ranging capabilities that Python
+comes with. One purpose of using Python here is to write a nontrivial program
+in the language and see how the process and product progress. Thus far I am
+not disappointed. Progress has been rapid, with about a month of elapsed time,
+and less than a hundred hours to produce a nearly complete product, including
+the traversal of many learning curves.
+
+The program centers on several in-memory databases using Python dictionaries.
+These keep track of the log data and the by-suffix listings that are used to
+quickly find duplicates. A disk backup of the data is kept updated by appending
+new entries as they arrive.
+
+The user interface centers on a contact data parser
+that carefully analyzes the input as it is typed, keystroke by keystroke. This
+prevents typing far beyond syntax errors and gives rapid user feedback.
+
+The network sharing of data depends on three UDP message types. The periodic
+broadcast from each station contains a list of that station's database
+contents. By listening to broadcasts, each station can determine which
+stations have database entries they are missing, and request them. The request
+is the second message type. The third message type is the contact information,
+and it is transmitted in response to a request. Additionally, a broadcast
+transmission of new data occurs when that data is generated, so that stations
+only need to request fills when they miss the original data broadcast.
+
+The effect of all this is that each station has a complete copy of all data,
+and loss of a station has little effect on the system. Also, a new station
+can be added at any time. This can be done in two different ways. One is to
+copy a starter database from any station (file fdlog.fdd) and place it in
+the program directory before starting it. Alternately, starting the program
+with no database file will also work, but in this case it will take a bit
+longer to catch up. It should load 5 to 10 entries per second. Obviously
+starting with a partial database can speed things up considerably.
+
+
+Wireless Networking
+
+There is a separate note on Wireless setup, refer to that for details. There
+are basically two modes for wireless one is Access point and the other is
+peer-to-peer, also referred to as ad-hoc. In the access point style of
+operation, all packets flow through the access point which is a gateway
+onto the rest of the internet. This is a great model for work or home.
+Out in the woods it also works, and is similar to repeater operation.  It
+has the effect of dropping the bandwidth in half since it is a store and
+forward type repeater. In peer-to-peer operation, stations communicate
+directly in a simplex mode type operation.
+
+If all stations can hear each other, the peer-to-peer operation should produce
+better performance, and avoids the single point of failure in the access
+point. If stations cannot all hear each other the software will still work,
+since the data will propagate partially from the initial broadcast and from
+there by fills. At some point the access point repeater type operation becomes
+more efficient if all stations can hear a single repeater.
+
+NOTE - Any standard networking will work, wireless is not required. Some
+folks prefer wired nets. The stations need to be within broadcast range
+of each other (at this time). The feature to span across networks is only
+partially implemented.
+
+
+Time Synchronization
+
+It is nice to have synchronous time in the database records. It is used to sort 
+log reports and determine the time window for accepting contact data for the
+contest. FDLog will internally keep the clients fairly well synchronized if
+a master time node is specified.
+
+In 2014 a GPS USB Clock was developed by Alan W6AKB. This clock allows FDLog
+to have time accuracy at the millisecond level. A node with a GPS Clock can
+be the time master and distribute time via the network. This keeps all FDLog
+programs well within a second of the same time. Design information and PC
+boards for this clock will be available later in 2014.
+
+Note that a GPS Clock is not necessary. If you have some other method of
+synchronizing time, such as NTP, you can designate machines so equipped
+with the (.timeok 1) command, and they will accept systm time and apply zero
+offset. Such a machine can be designated the time master (.set tmast <node>)
+and it will distribute its time. The priority for time is 1) GPS USB Clock, 
+2) timeok, and 3) time from the FDLog network.
+
+In testing with my laptop, the time drift is about 750 milliseconds per day.
+So if the clock were set manually to, say, WWV at the start of Field Day,
+it would still be less than one second off at the end. 
+
+Designating a time master is a good idea (.set tmast <node>). This node should
+be always-on (or can be re-designated to another node mid contest). This will
+help all FDLogs use the same time in their log databases. .set tmast will show
+the currently selected master node.
+
+
+Remote TCP Access
+
+In 2013 a remote TCP service was added to FDLog for testing and training.
+All nodes have a TCP service manager listening on port 5100. Incoming
+connections will be bridged into the FDLog network and can participate.
+To connect to a remote station, get their IP number and then use the
+(.remip <remote ip number>) with the appropriate IP number to connect.
+To disconnect use the command (.remip 0.0.0.0). To set this up any node
+can be the server (even multiple nodes), but it must recieve incoming 
+TCP on the port (5100). Each node can connect to one server, but it can 
+handle many incoming connections, and it can also do UDP broadcasts at 
+the same time. Only one node in a UDP broadcast zone (like your home 
+network) needs to do the remote TCP connection, then all the local UDP 
+nodes will pass info through the shared databases to the remote nodes 
+and vice-versa.
+
+
+GUI Version
+
+  The Graphical version of FDLog uses Python's TKInter package. It runs
+(fairly well) on all three platforms: Win32, MacOS, and Unix/Linux.
+
+
+  The text that follows concentrates on command techniques. The GUI menus and
+buttons are also available, explore them.
+
+  When you need to quit the program use File/Exit or the Window Exit button
+to exit properly. If FDLog crashes for some reason it will not release the 
+band. Start it again to release the band you had reserved. We have not seen
+crashes of FDLog for a long time, but this could also be a computer crash.
+If network connectivity is lost the band reservation will disappear from 
+other nodes after a minute or so, and if the node returns it could cause 
+two stations to be on the same band. Watch the band display for that green
+indicator to see that all is well.
+
+  Set the output power (in watts) used by the station with the buttons on the GUI. 
+Check the Natural box if applicable. This allows counting the natural power Qs for 
+bonus points. (Also referred to as alternate power).
+
+  Set the Operator and Logger with the buttons on the GUI.
+
+  Set the authentication code when asked during startup. The keys must match 
+for the net to share data.
+
+  The power, operator, logger, and authentication data are stored in a file with
+the log program on normal exit, and reloaded on restart to minimize re-entering.
+The band is not restored, so it will have to be re-selected after restarting the
+program. The band reservation will time out after about 15 minutes if there is no
+FDLog keyboard activity on the node.
+
+  Band reservations are set with band select pushbuttons. Bands 
+are 160/80/40/20/15/10/6/2 meters, or 220/440/1200 mhz or sat followed by a letter 
+c, d or p for cw, digital or phone. It will warn you if there is another station on 
+that band, but it will allow the change. Make sure the other station is not using 
+the same band before making contacts.
+
+  Testing is best done with the band set to 'off'. This is the startup default.
+Contacts made to band 'off' are not counted in the various scoring outputs, and
+can be filtered from the log, but they are allowed as practice. Entering a callsign
+and hitting return shows the log entries for that callsign, and it is useful to
+do that when the band is off.
+
+  Logging contacts is designed for maximum efficiency of keystrokes. Enter the 
+suffix followed by a space to do a quick dup callsign check. This will list any 
+calls on this band/mode that have that suffix. You could type the whole call and a 
+space, but the suffix lookup is quicker for most typists. To log that call enter 
+the prefix and a space, and it will automatically pick up the earlier suffix and 
+be ready for the report. After typing the report, wait for the actual QSL before 
+hitting return. Return logs the Q into the database, and sends it to all the
+cooperating databases.
+
+  Here is an example using 12 keystrokes to log a Q:
+
+  aw<space> ==> ['w2aw']         <shows w2aw was worked on this band>
+  w1<space> ==> w1aw<space>_     <waiting for report>
+  <report>  ==> w1aw 2a nc_      <waiting for return to log the Q>
+  <return>  ==> w1aw 2a nc QSL   <Q logged into db, broadcast to all nodes>
+
+  ESCape will cancel an entry in progress and clear the input line.
+
+  You can look up log info on a callsign with <call><return>. This will show
+log info for all bands/modes for this call.
+
+  An incorrectly entered Q can be edited by finding it in the middle LOG
+window and clicking on it (from the node that entered it). This brings
+up a dialog that will allow edit or deletion.
+
+  When taking a break in operations, set the band to 'off' with the ".off" command
+or GUI button. This makes the band available to others.
+
+  If a station is just joining the net, or was off for awhile, it will take time
+for it to 'catch up' to the full database. It attempts to do this at 5 contacts 
+per second, so it should not take long. It will display the data as it comes in,
+and a needs fill yellow indicator.
+
+Platform Issues
+
+  The Python version of FDLog was developed under Windows 2k and Python 2.2.
+The 2023 version has been ported to Python 3.10 and should run on somewhat
+earlier versions of Python and whatever systems are supported by the Python
+and TKinter. Many have used FDLog on Linux and the Mac and a few have run it 
+on other versions of Unix though that was a long time ago. This is all due 
+to the portability of Python and Tkinter. There are some issues that will 
+affect portability, and some functions may not work. For example, launching 
+the ARRL Rules pdf file may only work on Win32 due to the launching functions 
+it uses for pdf files which may not be supported on other platforms.
+
+GUI Color Code
+
+  The GUI version has some color coding. In the band select area we have Gray
+for available bands, Purple for occupied bands, Orange for an over-occupied band,
+Green for the band your station is on, and Red for an over-occupied band you are on.
+In the Class column White indicates no stations, Yellow is some but not all we are
+allotted, and Green is full usage of that station type. Red or Orange indicates too
+many stations for the set Class.
+
+Note that the 'target' for vhf is the number of 'free' stations, stations beyond
+the target value count toward the Class numbers.
+
+  In the log window the entries made by this node will be dark blue. Others are
+black.
+
+
+Reports (to Command window)
+
+.st     this station's status
+.ba     station and band status
+.re     log summary report
+.pr     print contest entry to file
+
+
+Node Status Display
+
+Point the cursor at the Class indicator and it will pop up a large ToolTip
+containing info about all the nodes. Each node gets a row, even nodes that 
+are gone but still exist in the database. 
+
+Columns and Definitions
+
+node    node name
+band    band reservation, off, or blank
+opr     operator selected
+logr    logger selected
+pwr     power and natural indicator
+qpn     qsos logged by this node
+tslq    time since last qso for this node hhmm to 9959
+tsh     time since heard directly heard directly, in seconds
+age     age of the information about this node
+host    host this node runs on (only if directly heard)
+ip      ip number of this node (only if directly heard)
+bctime  broadcast time (only if directly heard)
+
+Directly means the current node received broadcasts from the node. On UDP
+within a broadcast network all the stations hear all the broadcasts. On TCP
+a node only hears broadcasts from nodes it is connected directly to as a 
+client or as a server. Broadcasts contain information about other nodes that 
+a node has, so it propagates, this is referred to as hearsay. Hearsay ages
+out after a minute or so.
+
+
+Time Difference Windows
+
+  The .tdwin <msec> parameter sets the number of seconds of error 'allowed' 
+on incoming packets. Time errors greater than this window will trigger 
+printing of some packet info in the Command window. The packets are processed 
+normally, so triggering this print is message display filter only. The 
+.tawin <msec> does the same thing for time adjustments, displaying those
+exceeding the window. Note that these have been changed to milliseconds
+so 1000 is one second of window, plus or minus.
+
+
+Input Syntax
+
+call is
+  <prefix><suffix><tag>
+
+prefix is
+  <letters><digits> or <digits><letters>
+
+suffix is
+  <letters or digits>  (different from end of prefix)
+
+tag is
+  /<letters or digits>
+
+qso is
+  <call> <report>
+
+report is
+  <letters or digits or spaces>
+
+dot commands are
+  .help				    show .commands
+  .pow <digits[n]>		    set power level W, trailing n iff natural
+  .band <bandmode>		    set band and mode
+  .node <letters/digits/->          set station/node name
+  .tdwin <msec>                     incoming packet time error message window
+  .tawin <msec>                     time adjustment message window
+  .set <param> <value>		    set global parameter (see Help Menu)
+  .st                               this station status
+  .ba                               station band report
+  .re                               contest report
+  .pr                               generate contest entry file
+  .delete <node-id> <seq> <reason>  delete log entry
+  .debug <n>                        set debug level
+  .timeok <n>                       set system time trust level 0/1 (NTP)
+
+
+
+Send a Broadcast QST message to all stations:
+  #<message up to 80 chars> Messages over 40 chars are split into two
+  log line entries.
+
+
+Deleting items (creating delete entry in database)
+
+  .delete <node-id> <seqnum> <reason>	delete log entry
+
+  Note that the node-id and sequence number come from the right two columns
+  of the log displays and that a reason is required.
+
+
+
+Forcing a Contact into the database at a specific time (eg: from paper logs)
+
+  First set band, mode, operator, logger and power as the Qs will pick this up.
+  Then for each QSO type it in the following format:
+
+  :dd.hhmm <call> <report>
+
+
+  Time and date should be in UTC, two digit day of month, two digit hours and minutes.
+
+
+Computer Preparation
+
+  install Python of the appropriate version, 3.9 or better for
+    the new fdlog3.py or 2.7.x for the older fdlog.py
+  configure the network - see separate wireless network document
+  set time clock accurately - to within a couple of seconds
+  set computer timezone correctly
+  turn off screen saver or set it appropriately long
+  adjust auto-turnoff/hibernate/shutdown to avoid surprises
+  allow this program through the firewall to use the network
+  if using a shortcut set the default directory to where the prog dir is
+    and if necessary set the path to the appropriate Python program
+
+
+Contest Preparation
+
+  put a propagation report in 'propagation.txt' in the fdlog folder
+  copy field day rules (from ARRL) into fdrules.pdf
+  test everything and train users using 'tst' authentication key
+
+  choose authentication key for operations (yyy or yyzzzz)(3-12 chars total)
+    add a trailing minus sign for V2 compatible network mode
+    which is required if some nodes are running older Python 2.x
+    versions of FDLog
+  change to contest key at start of contest (restart apps)
+  set time master node (.set tmast <node>)
+  set field day call (.set fdcall <call>)
+  set GOTA call (.set gcall <call>) if a GOTA station is used
+  set GOTA node id to 'gota' (for the GOTA station computer only)
+  set class (.set class XX)
+  set section (.set sect XX-XXXXX XXXXX) (abbrev and full spelling)
+  add participants
+
+
+After the Contest
+
+Preparing the report for submission after the contest
+
+  set fdstrt   (optional, this clips off qso's that are earlier)
+  set fdend    (optional, this clips of qso's that are later)
+  set submission from call (see set commands help in program)
+  set from name
+  set from address ..
+  set power sources
+  set visitors
+  set info booth
+  set demo stations
+  look through set commands, set as appropriate
+
+  put message texts into files
+    w1aw_msg.txt                                       copied w1aw message
+    nts_msg.txt                                        originated NTS message
+    nts_rly0.txt to nts_rly9.txt (one msg per file)    first 10 relayed NTS messages
+    soapbox.txt                                        soapbox comments
+    media.txt                                          media text
+
+    note sample nts msg text in nts_eg.txt
+
+  
+  generate the report (file/save entry file)
+
+  inspect the report, iterate as needed (fdlog.log)
+
+  copy off the top section for submission to ARRL
+  keep the whole file for your records
+
+
+Diagnosing Problems with FDLog
+
+Network Issues
+
+FDLog grabs the network address during startup (selected by the user in the
+startup dialog). It then uses this address for the duration of it's operation.
+If the machine's network address changes FDLog will not track this change
+and will need to be restarted. It may be able to receive messages from other
+nodes after a change of address but it will not be able to send packets.
+Network IP numbers typically change when moving between wired and wireless 
+netowrks, and when changing routers. VPNs also create new networks, and
+they may cause networks to shift. FDLog can be simultaneously connected to
+one local UDP broadcast network, one remote server via TCP, and multiple
+incoming TCP clients. Each FDLog node is both a client and a server for TCP.
+
+Firewalls can prevent network communication in one or both directions.
+Make sure that FDLog is allowed to talk to all networks through the firewall.
+
+FDLog should be started after connection to the network is established, or
+re-established so it gets the proper network information.
+
+-----
+
+Send Comments and Suggestions to the author
+
+Alan Biocca  W6AKB at ARRL.net
+
+eof

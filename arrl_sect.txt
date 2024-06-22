@@ -1,0 +1,19 @@
+                   ARRL/CANADIAN SECTION ABBREVIATIONS
+
+
+      1      2      3      4     5     6     7     8     9     0    CANADA
+                     
+     CT   | ENY  | DE   | AL  | AR  | EB  | AK  | MI  | IL  | CO  | AB
+     EMA  | NLI  | EPA  | GA  | LA  | LAX | AZ  | OH  | IN  | IA  | BC
+     ME   | NNJ  | MDC  | KY  | MS  | ORG | EWA | WV  | WI  | KS  | GTA
+     NH   | NNY  | WPA  | NC  | NM  | PAC | ID  |     |     | MN  | MAR
+     RI   | SNJ  |      | NFL | NTX | SB  | MT  |     |     | MO  | MB
+     VT   | WNY  |      | PR  | OK  | SCV | NV  |     |     | ND  | NL
+     WMA  |      |      | SC  | STX | SDG | OR  |     |     | NE  | NT
+          |      |      | SFL | WTX | SF  | UT  |     |     | SD  | ONE
+          |      |      | TN  |     | SJV | WWA |     |     |     | ONN
+          |      |      | VA  |     | SV  | WY  |     |     |     | ONS
+          |      |      | VI  |     |     |     |     |     |     | QC
+          |      |      | WCF |     |     |     |     |     |     | SK
+
+                    contributed by Robert K5LYT

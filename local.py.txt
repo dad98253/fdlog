@@ -1,0 +1,33 @@
+# local.py example Copyright 3/2023  akbiocca w6akb
+
+# These will override values in the FDLog program
+#   Copy or rename this file to local.py and make customizations
+#   The values in this file will override the defaults in FDLog3.
+
+startDialog = 1     # 0 to skip initial dialog for testing else 1 for normal
+idleTimeout = 900   # idle timeout release band after seconds 900 is 15 min
+ttofs = 0           # time testing offset
+forceUDPort = 0     # force UDP port, 0 normal, -1 for no UDP, else force
+
+# tcptable maps '1'..'9' to ip number values for convenience (for remip)
+tcptable = \
+    {'1':"1.2.3.4",
+     '2':"5.6.7.8"}
+
+fontsize = 10               # 10 default
+fontinterval = 2            # 2 default
+typeface = 'Courier'        # 'Courier' default
+
+print("local settings")
+print("  time test offset",ttofs)
+print("  idle tmo",idleTimeout)
+print("  force udp",forceUDPort)
+print("  font size",fontsize)
+print("    interval",fontinterval)
+print("    type",typeface)
+print("  tcpip for .remip")
+for i,j in tcptable.items():
+    print('   ',i,j)
+print()
+del i,j
+
