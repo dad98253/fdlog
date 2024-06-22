@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Field Day Log
+Comment=Manage Field Day log files
+Exec="/home/dad/bin/fdlog.sh"
+Icon=logview
+Categories=Application
+Terminal=false
+StartupNotify=false
